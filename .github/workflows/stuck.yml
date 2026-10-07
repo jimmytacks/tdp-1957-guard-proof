@@ -1,0 +1,27 @@
+# Mirrors publish-host.yml's shape: serialised group, build -> release -> dispatch-staging on an environment.
+name: Stuck
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: stuck-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  publish-host:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo build ${{ github.sha }}
+  release:
+    needs: publish-host
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo release
+  dispatch-staging:
+    needs: release
+    runs-on: ubuntu-latest
+    environment: guard-test
+    steps:
+      - run: echo "deployed ${{ github.sha }}"

@@ -1,0 +1,16 @@
+# A run that is executing (a long job) while its dispatch-staging job waits on an environment.
+name: Busy
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  slow:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sleep 900
+  dispatch-staging:
+    runs-on: ubuntu-latest
+    environment: guard-test-busy
+    steps:
+      - run: echo deployed
